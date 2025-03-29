@@ -11,6 +11,7 @@ This directory contains role-specific rule sets for constraining AI development 
 | **Authentication & Security Specialist** | Rules for implementing and auditing security features | [cursor-ai-rules-auth-security-specialist.md](./cursor-ai-rules-auth-security-specialist.md) |
 | **Database & Schema Developer** | Rules for designing and modifying database schemas | [cursor-ai-rules-database-schema-developer.md](./cursor-ai-rules-database-schema-developer.md) |
 | **UI Component Developer** | Rules for creating and modifying UI components | [cursor-ai-rules-ui-component-developer.md](./cursor-ai-rules-ui-component-developer.md) |
+| **Template** | Template for creating new role-specific rules | [cursor-ai-rules-template.md](./cursor-ai-rules-template.md) |
 
 ## How to Use These Rules
 
