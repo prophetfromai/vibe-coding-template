@@ -1,6 +1,52 @@
 # Cursor AI Role-Specific Rules
 
+> **AI Agent Instructions**
+> 
+> As an AI code generation agent, you must follow this exact workflow:
+> 1. Read the top-level `README.md` first to understand repository principles and structure
+> 2. Consult this index to identify the appropriate role context for your current task
+> 3. Read and apply the specific rules from the relevant role context file
+> 4. Verify all generated code conforms to both global repository principles and role-specific rules
+> 5. Ensure all work adheres to the branch structure described in the documentation
+> 
+> Important: You are bound by the constraints in these documents. Do not generate code outside your defined role scope.
+>
+> For detailed workflow instructions, see [ai-agent-workflow.md](./ai-agent-workflow.md)
+
 This directory contains role-specific rule sets for constraining AI development in Cursor when working on specific tasks. These rules help ensure that AI assistance remains focused on the appropriate scope of work and follows best practices for each specialized area.
+
+## AI Workflow Visualization
+
+```mermaid
+graph TD
+    A[Task Request] --> B[1. Read Top-level README.md]
+    B --> C[2. Consult this Index]
+    C --> D[3. Select Appropriate Role]
+    D --> E[4. Apply Role-specific Rules]
+    E --> F[5. Generate Code in ai-gen/ Branch]
+    
+    D -->|UI Focus| G[UI Component Developer]
+    D -->|API Focus| H[API Developer]
+    D -->|Auth Focus| I[Auth & Security Specialist]
+    D -->|Data Focus| J[Database & Schema Developer]
+    D -->|Dashboard Focus| K[Dashboard Developer]
+    
+    G --> L[UI Components Only]
+    H --> M[API Endpoints Only]
+    I --> N[Auth & Security Only]
+    J --> O[Schema & Data Only]
+    K --> P[Dashboard Components Only]
+    
+    L --> F
+    M --> F
+    N --> F
+    O --> F
+    P --> F
+    
+    style B fill:#d0f0c0,stroke:#333,stroke-width:2px
+    style D fill:#c0d0f0,stroke:#333,stroke-width:2px
+    style F fill:#f0c0c0,stroke:#333,stroke-width:2px
+```
 
 ## Available Role-Specific Rules
 
@@ -18,12 +64,15 @@ This directory contains role-specific rule sets for constraining AI development 
 1. **Identify the appropriate role** for your current development task
 2. **Copy the relevant rules file** into your project workspace
 3. **Reference these rules in your prompt** to Cursor AI to constrain its development focus
+4. **Ensure the AI understands the repository workflow** by pointing it to the top-level README.md
+5. **Verify generated code** adheres to both the role-specific rules and global repository guidelines
 
 Example prompt:
 
 ```
-I need help modifying the dashboard to add a new chart component. 
-Please follow the rules in the cursor-ai-rules-dashboard-developer.md file.
+I need help modifying the dashboard to add a new chart component.
+First, please read the top-level README.md to understand our repository structure and branch workflow.
+Then, follow the rules in the cursor-ai-rules-dashboard-developer.md file.
 The new chart should display...
 ```
 
