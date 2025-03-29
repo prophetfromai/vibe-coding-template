@@ -2,6 +2,27 @@
 
 This directory contains project documentation. This README provides an overview of the documentation structure and guidelines for AI assistants.
 
+## AI Agent Documentation Guidelines
+
+> **For AI Code Generation Agents:**
+> 
+> When creating or modifying documentation in this project:
+> 
+> 1. Use Mermaid diagrams to visualize complex relationships and workflows
+> 2. Create diagrams that clearly illustrate architectural boundaries and constraints
+> 3. Include diagrams showing correct and incorrect approaches when explaining guidelines
+> 4. Ensure diagrams are accessible by including text descriptions
+> 
+> You MUST use Mermaid diagrams when:
+> - Explaining component interactions
+> - Describing data flows
+> - Illustrating architectural patterns
+> - Documenting decision trees
+> - Clarifying process workflows
+> - Highlighting boundaries between responsibilities
+> 
+> The diagrams should help prevent common misunderstandings and clarify the intent of the documentation.
+
 ## Documentation Structure
 
 ```

@@ -264,3 +264,132 @@ Failure to follow this workflow may result in:
 4. Undermining trust in AI assistance
 
 Always prioritize strict adherence to project guidelines over speed or feature completeness. 
+
+## Using Mermaid Diagrams Effectively
+
+As an AI code generation agent, you should use Mermaid diagrams to clarify complex concepts, workflows, and relationships. Diagrams are especially important when explaining concepts that might be misunderstood or misinterpreted.
+
+### When to Use Mermaid Diagrams
+
+Always create and include Mermaid diagrams when:
+
+1. **Explaining Component Relationships**:
+   - How different components interact
+   - Dependency hierarchies
+   - System architecture
+
+2. **Describing Processes**:
+   - Workflow steps
+   - Decision trees
+   - Data flow
+
+3. **Clarifying Boundaries**:
+   - Role permissions and limitations
+   - Architectural layers
+   - Security domains
+
+4. **Highlighting Critical Distinctions**:
+   - Correct vs. incorrect approaches
+   - Before vs. after states
+   - Alternative implementation strategies
+
+### Mermaid Diagram Best Practices
+
+```mermaid
+graph TD
+    A[Effective Diagrams] --> B[Clear Purpose]
+    A --> C[Visual Distinctions]
+    A --> D[Appropriate Type]
+    A --> E[Consistent Style]
+    
+    B --> F[Focuses on One Concept]
+    B --> G[Has Descriptive Title]
+    
+    C --> H[Uses Different Node Shapes]
+    C --> I[Uses Color Coding]
+    C --> J[Labels Connections]
+    
+    D --> K[graph TD for Hierarchies]
+    D --> L[graph LR for Processes]
+    D --> M[sequenceDiagram for Interactions]
+    
+    E --> N[Matches Project Standards]
+    E --> O[Uses Consistent Colors]
+    
+    style A fill:#d0f0c0,stroke:#333,stroke-width:2px
+```
+
+### Common Diagram Types and Their Uses
+
+1. **Component Relationship Diagram**:
+```mermaid
+graph TD
+    A[Component A] --> B[Component B]
+    A --> C[Component C]
+    B --> D[Component D]
+    C --> D
+```
+
+2. **Process Flow Diagram**:
+```mermaid
+graph LR
+    A[Start] --> B[Process 1]
+    B --> C[Process 2]
+    C --> D{Decision}
+    D -->|Yes| E[Process 3a]
+    D -->|No| F[Process 3b]
+    E --> G[End]
+    F --> G
+```
+
+3. **Sequence Diagram for Interactions**:
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API
+    participant D as Database
+    
+    U->>A: Request Data
+    A->>D: Query
+    D->>A: Results
+    A->>U: Response
+```
+
+4. **State Transition Diagram**:
+```mermaid
+stateDiagram-v2
+    [*] --> Pending
+    Pending --> Processing
+    Processing --> Completed
+    Processing --> Failed
+    Completed --> [*]
+    Failed --> [*]
+```
+
+### Diagrams for Preventing Common Pitfalls
+
+When you identify a potential misunderstanding or common mistake, create a diagram showing both the correct and incorrect approaches:
+
+```mermaid
+graph TD
+    A[Task: Update User Profile] --> B{Approach}
+    
+    B -->|Correct| C[UI Developer Updates UI Components Only]
+    B -->|Incorrect| D[UI Developer Also Changes Database Schema]
+    
+    C --> E[Safe Implementation]
+    D --> F[Role Violation!]
+    
+    style C fill:#ccffcc,stroke:#333,stroke-width:2px
+    style D fill:#ffcccc,stroke:red,stroke-width:2px
+    style E fill:#ccffcc,stroke:#333,stroke-width:2px
+    style F fill:#ffcccc,stroke:red,stroke-width:2px
+```
+
+### Diagram Creation Guidelines
+
+1. **Keep It Simple**: Focus on one concept per diagram
+2. **Be Consistent**: Use the same visual language throughout
+3. **Add Context**: Include a brief text explanation with each diagram
+4. **Use Color Meaningfully**: Follow the color coding conventions in cursor-ai-rules-template.md
+5. **Label Everything**: Make sure all nodes and connections have clear labels 

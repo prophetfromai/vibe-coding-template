@@ -172,3 +172,77 @@ graph TD
    - Focus on [key aspects] and [important metrics]
    - Provide clear rationale for changes
    - Consider impact on [related systems or requirements] 
+
+## Mermaid Diagram Guidelines
+
+When creating Mermaid diagrams to explain concepts in this role:
+
+1. **Use Color Coding Consistently**:
+   - Green (`#ccffcc`) for correct approaches
+   - Red (`#ffcccc`) for incorrect approaches or warnings
+   - Blue (`#ccccff`) for important components
+   - Yellow (`#ffffcc`) for decision points
+
+2. **Diagram Types for Different Purposes**:
+   - `graph TD` (top-down) for hierarchical structures
+   - `graph LR` (left-right) for workflows and processes
+   - `sequenceDiagram` for interaction sequences
+   - `flowchart` for complex decision flows
+   - `classDiagram` for component relationships
+
+3. **Clarity Rules**:
+   - Label all connections with descriptive text
+   - Use different node shapes for different types of elements
+   - Keep diagrams focused on one concept
+   - Avoid overly complex diagrams with too many nodes
+
+```mermaid
+flowchart TD
+    A[Start: Create Diagram] --> B{What to Visualize?}
+    
+    B -->|Hierarchy| C[Use graph TD]
+    B -->|Process| D[Use graph LR]
+    B -->|Interactions| E[Use sequenceDiagram]
+    B -->|Complex Flow| F[Use flowchart]
+    
+    C & D & E & F --> G[Apply Color Coding]
+    G --> H[Add Clear Labels]
+    H --> I[Review for Clarity]
+    I -->|Clear| J[Add to Documentation]
+    I -->|Unclear| K[Simplify Diagram]
+    K --> I
+    
+    style B fill:#ffffcc,stroke:#333,stroke-width:2px
+    style J fill:#ccffcc,stroke:#333,stroke-width:2px
+    style K fill:#ffcccc,stroke:#333,stroke-width:2px
+```
+
+4. **Common Diagram Patterns**:
+
+For explaining allowed vs. prohibited actions:
+```mermaid
+graph TD
+    A([Role]) --> B[Allowed]
+    A --> C[Prohibited]
+    
+    style B fill:#ccffcc,stroke:#333,stroke-width:2px
+    style C fill:#ffcccc,stroke:#333,stroke-width:2px
+```
+
+For explaining decision flows:
+```mermaid
+graph TD
+    A[Action] --> B{Decision Point}
+    B -->|Condition 1| C[Outcome 1]
+    B -->|Condition 2| D[Outcome 2]
+    
+    style B fill:#ffffcc,stroke:#333,stroke-width:2px
+```
+
+For explaining processes:
+```mermaid
+graph LR
+    A[Step 1] --> B[Step 2] --> C[Step 3]
+    C -->|Condition| D[Step 4a]
+    C -->|Alternative| E[Step 4b]
+``` 

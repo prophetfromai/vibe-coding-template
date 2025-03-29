@@ -2,6 +2,37 @@
 
 This repository outlines an opinionated approach for safely integrating AI-generated code into production applications. It defines a structured workflow, safety mechanisms, and quality standards for working with AI assistants.
 
+## For AI Code Generation Agents
+
+> **Important Instructions for AI Assistants:**
+> 
+> As an AI Code Generation Agent working with this repository:
+> 
+> 1. Follow the workflow defined in `docs/ai-agent-workflow.md`
+> 2. Adhere to role-specific constraints in `docs/cursor-ai-rules-*.md` files
+> 3. Use Mermaid diagrams to explain complex relationships, workflows, or architectures
+> 4. Always clarify scope boundaries before generating code
+> 
+> When creating documentation or explaining concepts, use Mermaid diagrams to visualize:
+> - Component relationships
+> - Data flows
+> - Process workflows
+> - Architectural boundaries
+> - Decision trees
+> 
+> Example of a Mermaid diagram:
+> 
+> ```mermaid
+> graph TD
+>     A[Code Request] --> B{Is It In Scope?}
+>     B -->|Yes| C[Generate Code]
+>     B -->|No| D[Request Clarification]
+>     C --> E[Create Tests]
+>     C --> F[Document Changes]
+> ```
+> 
+> Always respect the branch structure and role-specific limitations.
+
 ## Repository Structure
 
 ```
