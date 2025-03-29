@@ -1,0 +1,203 @@
+name: Branch Promotion
+
+on:
+  workflow_dispatch:
+    inputs:
+      feature_name:
+        description: 'Feature name (used in branch naming)'
+        required: true
+        type: string
+      promotion_type:
+        description: 'Type of promotion'
+        required: true
+        type: choice
+        options:
+          - gen-to-review
+          - review-to-prod
+          - prod-to-main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Validate input parameters
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          PROMOTION_TYPE="${{ github.event.inputs.promotion_type }}"
+          
+          if [[ -z "$FEATURE_NAME" ]]; then
+            echo "Feature name is required"
+            exit 1
+          fi
+          
+          if [[ "$PROMOTION_TYPE" == "gen-to-review" ]]; then
+            BRANCH="ai-gen/$FEATURE_NAME"
+          elif [[ "$PROMOTION_TYPE" == "review-to-prod" ]]; then
+            BRANCH="ai-review/$FEATURE_NAME"
+          elif [[ "$PROMOTION_TYPE" == "prod-to-main" ]]; then
+            BRANCH="ai-prod/$FEATURE_NAME"
+          else
+            echo "Invalid promotion type"
+            exit 1
+          fi
+          
+          # Check if branch exists
+          if ! git ls-remote --heads origin "$BRANCH" | grep -q "$BRANCH"; then
+            echo "Branch $BRANCH does not exist"
+            exit 1
+          fi
+          
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+          echo "FEATURE_NAME=$FEATURE_NAME" >> $GITHUB_ENV
+          echo "PROMOTION_TYPE=$PROMOTION_TYPE" >> $GITHUB_ENV
+
+  promote-gen-to-review:
+    needs: validate
+    if: github.event.inputs.promotion_type == 'gen-to-review'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+      - name: Create AI Review Branch
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          git checkout "ai-gen/$FEATURE_NAME"
+          git pull origin "ai-gen/$FEATURE_NAME"
+          
+          # Check if ai-review branch already exists
+          if git ls-remote --heads origin "ai-review/$FEATURE_NAME" | grep -q "ai-review/$FEATURE_NAME"; then
+            echo "Branch ai-review/$FEATURE_NAME already exists"
+            git checkout "ai-review/$FEATURE_NAME"
+            git pull origin "ai-review/$FEATURE_NAME"
+            git merge "ai-gen/$FEATURE_NAME" -m "feat: promote $FEATURE_NAME from gen to review stage"
+          else
+            echo "Creating new ai-review/$FEATURE_NAME branch"
+            git checkout -b "ai-review/$FEATURE_NAME"
+          fi
+          
+          git push origin "ai-review/$FEATURE_NAME"
+          
+      - name: Create Pull Request for Review Stage
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          title: "[REVIEW] ${{ github.event.inputs.feature_name }}"
+          body: |
+            # AI Review Stage: ${{ github.event.inputs.feature_name }}
+            
+            This PR contains AI-generated code that has passed initial validation and is now ready for comprehensive review.
+            
+            ## Review Checklist
+            - [ ] Code follows project conventions and style guidelines
+            - [ ] All specified requirements are implemented
+            - [ ] Edge cases are handled appropriately
+            - [ ] Error handling is comprehensive
+            - [ ] Security best practices are followed
+            - [ ] Performance considerations are addressed
+            - [ ] Tests are included and passing
+            - [ ] Documentation is complete and accurate
+          
+          branch: "ai-review/${{ github.event.inputs.feature_name }}"
+          draft: true
+          
+  promote-review-to-prod:
+    needs: validate
+    if: github.event.inputs.promotion_type == 'review-to-prod'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+      - name: Create AI Prod Branch
+        run: |
+          FEATURE_NAME="${{ github.event.inputs.feature_name }}"
+          git checkout "ai-review/$FEATURE_NAME"
+          git pull origin "ai-review/$FEATURE_NAME"
+          
+          # Check if ai-prod branch already exists
+          if git ls-remote --heads origin "ai-prod/$FEATURE_NAME" | grep -q "ai-prod/$FEATURE_NAME"; then
+            echo "Branch ai-prod/$FEATURE_NAME already exists"
+            git checkout "ai-prod/$FEATURE_NAME"
+            git pull origin "ai-prod/$FEATURE_NAME"
+            git merge "ai-review/$FEATURE_NAME" -m "feat: promote $FEATURE_NAME from review to prod stage"
+          else
+            echo "Creating new ai-prod/$FEATURE_NAME branch"
+            git checkout -b "ai-prod/$FEATURE_NAME"
+          fi
+          
+          git push origin "ai-prod/$FEATURE_NAME"
+          
+      - name: Create Pull Request for Production Stage
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          title: "[PROD] ${{ github.event.inputs.feature_name }}"
+          body: |
+            # AI Production Stage: ${{ github.event.inputs.feature_name }}
+            
+            This PR contains AI-generated code that has passed comprehensive review and is now ready for production.
+            
+            ## Production Readiness Checklist
+            - [ ] All tests are passing
+            - [ ] Code has been reviewed by at least 2 developers
+            - [ ] Security scan has found no critical issues
+            - [ ] Performance meets or exceeds benchmarks
+            - [ ] Documentation is complete and up-to-date
+            - [ ] Feature meets all specified requirements
+          
+          branch: "ai-prod/${{ github.event.inputs.feature_name }}"
+          draft: false
+          
+  promote-prod-to-main:
+    needs: validate
+    if: github.event.inputs.promotion_type == 'prod-to-main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+      - name: Create Direct PR to Main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          title: "[MAIN] ${{ github.event.inputs.feature_name }}"
+          body: |
+            # AI Feature Ready for Main: ${{ github.event.inputs.feature_name }}
+            
+            This PR contains AI-generated code that has passed all validation stages and is ready for production deployment.
+            
+            ## Final Approval Checklist
+            - [ ] All tests are passing
+            - [ ] Code has been reviewed by senior developer
+            - [ ] Security and compliance requirements are met
+            - [ ] Documentation is complete and up-to-date
+            - [ ] Feature has been verified in staging environment
+          
+          branch: "ai-prod/${{ github.event.inputs.feature_name }}"
+          draft: false 

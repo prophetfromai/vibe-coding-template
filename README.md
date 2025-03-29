@@ -22,12 +22,16 @@ This repository outlines an opinionated approach for safely integrating AI-gener
 │   └── README.md              # Testing guidelines
 ├── docs/                      # Documentation
 │   ├── README.md              # Documentation overview
-│   ├── security/              # Security guidelines
-│   │   └── README.md          # Security protocols
-│   └── workflows/             # Workflow documentation
-│       └── README.md          # AI/human collaboration workflows
-└── .github/                   # GitHub configurations
-    └── README.md              # GitHub automation guidelines
+│   ├── workflows/             # Workflow documentation
+│   │   ├── README.md          # AI/human collaboration workflows
+│   │   └── branch-automation.md # Branch automation documentation
+│   └── security/              # Security guidelines
+│       └── README.md          # Security protocols
+├── .github/                   # GitHub configurations
+│   └── README.md              # GitHub automation guidelines
+└── scripts/                   # Automation scripts
+    ├── branch-automation.sh   # Branch management script
+    └── setup-repo.sh          # Repository setup script
 ```
 
 ## Core Principles
@@ -40,9 +44,61 @@ This repository outlines an opinionated approach for safely integrating AI-gener
 
 ## Getting Started
 
-1. Read the `README-CICD.md` file to understand the workflow
-2. Explore the `docs/workflows/README.md` for collaboration patterns
-3. Use the section-specific READMEs to guide AI code generation
+### Initial Setup
+
+1. Clone this repository
+2. Run the setup script to configure the repository:
+
+```bash
+chmod +x scripts/setup-repo.sh
+./scripts/setup-repo.sh
+```
+
+This will:
+- Create necessary directories
+- Set up git hooks for enforcing conventions
+- Configure branch protection workflows
+- Create a sample feature branch
+
+### Branch Workflow
+
+The repository uses a three-stage branch structure for AI-generated code:
+
+1. **ai-gen/** - Initial AI-generated code (development stage)
+2. **ai-review/** - AI code after human review (verification stage)
+3. **ai-prod/** - Production-ready AI code (production readiness stage)
+
+### Using the Branch Automation
+
+The repository includes a script to manage branch transitions:
+
+```bash
+# Create a new AI feature branch
+./scripts/branch-automation.sh feature-name
+
+# Promote an AI feature to review stage
+./scripts/branch-automation.sh feature-name promote-to-review
+
+# Promote an AI feature to production stage
+./scripts/branch-automation.sh feature-name promote-to-prod
+```
+
+### GitHub Actions Workflow
+
+For team environments, you can use the GitHub Actions workflow:
+
+1. Navigate to GitHub Actions → Branch Promotion
+2. Click "Run workflow"
+3. Enter the feature name and select promotion type
+4. Click "Run workflow"
+
+## Workflow Documentation
+
+For detailed workflow information, see:
+
+- `README-CICD.md` - CI/CD pipeline details
+- `docs/workflows/branch-automation.md` - Branch automation workflow
+- `docs/workflows/README.md` - AI/human collaboration patterns
 
 ## Technology Stack
 
