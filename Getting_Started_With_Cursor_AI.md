@@ -67,7 +67,7 @@ This creates an `ai-gen/feature-name` branch where AI-generated code will be iso
 When working with Cursor AI, follow this process:
 
 1. **Determine the role** - Identify which role-specific guide applies to your task (UI, API, Database, etc.)
-2. **Instruct the AI** - Use a prompt following this pattern:
+2. **Instruct the AI** - Use a prompt following this pattern THEN copy the output into the rules of Cursor AI IDE:
 
 ```
 I need help with [task description].
