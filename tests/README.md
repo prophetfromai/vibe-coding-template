@@ -320,4 +320,68 @@ Consider these performance aspects:
 - Tests are deterministic (same input → same result)
 - Tests are fast to execute
 - Tests provide clear failure messages
-- Tests avoid unnecessary complexity 
+- Tests avoid unnecessary complexity
+
+## Running Tests
+
+This project uses Jest for unit and integration testing, and Cypress for end-to-end testing.
+
+### Jest Tests
+
+To run all tests:
+```bash
+npm test
+```
+
+To run only unit tests:
+```bash
+npm run test:unit
+```
+
+To run only integration tests:
+```bash
+npm run test:integration
+```
+
+To generate a coverage report:
+```bash
+npm run test:coverage
+```
+
+### Writing Tests
+
+Test files should be placed alongside the code they're testing with a `.test.tsx` or `.test.ts` extension.
+
+For example:
+- `src/components/Button/Button.tsx` -> `src/components/Button/Button.test.tsx`
+- `src/services/auth.ts` -> `src/services/auth.test.ts`
+
+We use React Testing Library for component tests. Here's a simple example:
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import MyComponent from './MyComponent';
+
+describe('MyComponent', () => {
+  test('renders correctly', () => {
+    render(<MyComponent />);
+    expect(screen.getByText('Expected Text')).toBeInTheDocument();
+  });
+});
+```
+
+### Mocks
+
+Common mocks are set up in `jest.setup.js`, including:
+- fetch API
+- localStorage
+- Other browser APIs as needed
+
+To create custom mocks for specific tests, use Jest's mocking capabilities:
+
+```tsx
+jest.mock('../path/to/dependency', () => ({
+  someFunction: jest.fn(),
+}));
+``` 
