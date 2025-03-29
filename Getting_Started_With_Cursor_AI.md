@@ -1,5 +1,7 @@
 # Getting Started with AI Code Generation in Cursor
 
+All new code is intended to be generated programatically using AI Code Gen Agents to ensure all relevant context docs are created. 
+
 Welcome to this repository! This guide will help you understand how to effectively use Cursor AI with this codebase, which has been specifically structured to facilitate safe and effective collaboration with AI coding assistants.
 
 ## Understanding the Repository Structure
