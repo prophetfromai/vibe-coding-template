@@ -2,6 +2,31 @@
 
 This repository outlines an opinionated approach for safely integrating AI-generated code into production applications. It defines a structured workflow, safety mechanisms, and quality standards for working with AI assistants.
 
+## 📄 Scientific Paper: Mermaid-Guided Documentation Framework
+
+We've published a scientific analysis of our approach in:
+
+**[Mermaid-Guided Documentation for AI Code Generation: A Framework for Structured Collaboration in Git Repositories](MermaidGuided_AI_CodeGen_Framework.md)**
+
+This paper examines how structured documentation with embedded Mermaid diagrams can guide AI code generation agents by:
+
+- Visually communicating system architectures and workflows
+- Enforcing role-based access constraints
+- Implementing a secure multi-stage branch strategy
+- Providing clear examples of correct and incorrect approaches
+
+```mermaid
+graph TD
+    A[Documentation] --> B{Understanding}
+    B -->|Visual Guides| C[Correct Implementation]
+    B -->|Missing Context| D[Architectural Violations]
+    
+    style C fill:#99ff99,stroke:green,stroke-width:2px
+    style D fill:#ff9999,stroke:red,stroke-width:2px
+```
+
+The framework addresses key challenges in security, code quality, and architectural integrity when integrating AI assistants into development workflows.
+
 ## For AI Code Generation Agents
 
 > **Important Instructions for AI Assistants:**
