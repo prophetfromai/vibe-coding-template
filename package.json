@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "Template for safely integrating AI-generated code into production applications",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prophetfromai/vibe-coding-template.git"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack serve --mode development",
