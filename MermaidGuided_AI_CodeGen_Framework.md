@@ -40,6 +40,18 @@ The framework leverages several Mermaid diagram types:
 4. **State Diagrams** - Show state transitions in workflows
 5. **Entity Relationship Diagrams** - Map data models and relationships
 
+### 1.2 Novel Contributions
+
+This framework introduces several novel approaches to AI-assisted software development:
+
+1. **Visual Boundary Enforcement** - Using embedded Mermaid diagrams to explicitly visualize architectural boundaries and role constraints for AI agents
+2. **AI-Specific Branch Strategy** - A tiered promotion workflow (ai-gen → ai-review → ai-prod) designed specifically for isolating and validating AI-generated code
+3. **Role-Based Visual Guidance** - Diagram-enhanced documentation that defines clear domain responsibilities for different AI coding roles
+4. **Integrated Automation Infrastructure** - Purpose-built scripts and workflows that enforce the AI code promotion process
+5. **Visual Comparative Examples** - Side-by-side diagram illustrations of correct versus incorrect approaches for AI agents
+
+These innovations address key challenges in securely integrating AI code generation into production environments while maintaining architectural integrity and code quality.
+
 ## 2. System Architecture
 
 ### 2.1 Documentation Structure
