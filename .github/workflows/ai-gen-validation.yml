@@ -1,0 +1,41 @@
+name: AI-Gen Validation
+
+on:
+  pull_request:
+    branches:
+      - 'ai-gen/**'
+  push:
+    branches:
+      - 'ai-gen/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        id: lint
+        run: npm run lint
+      - name: Type check
+        id: type-check
+        run: npm run type-check
+      - name: Unit tests
+        id: unit-tests
+        run: npm run test:unit
+      - name: Basic security scan
+        id: security-scan
+        run: npm run security:basic
+      - name: Report
+        if: always()
+        run: |
+          echo "## Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Linting: ${{ steps.lint.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Type Check: ${{ steps.type-check.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Unit Tests: ${{ steps.unit-tests.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security Scan: ${{ steps.security-scan.outcome }}" >> $GITHUB_STEP_SUMMARY 

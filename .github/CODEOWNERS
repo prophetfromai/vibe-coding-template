@@ -1,0 +1,21 @@
+# Global code owners
+* @admin-team
+
+# Security-sensitive code
+/src/services/auth/ @security-team
+/src/utils/crypto/ @security-team
+
+# UI components
+/src/components/ @frontend-team
+
+# API and backend services
+/src/services/ @backend-team
+
+# Configuration
+/src/config/ @devops-team
+
+# CI/CD workflows
+/.github/workflows/ @devops-team
+
+# Documentation
+/docs/ @docs-team 
