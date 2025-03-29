@@ -1,0 +1,36 @@
+name: Security Scanning
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2 AM
+  workflow_dispatch:     # Allow manual triggering
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Static Code Analysis
+        run: npm run security:full
+      - name: Dependency Scan
+        run: npm audit --production
+      - name: Secret Scanning
+        run: npm run security:secrets
+      - name: Generate Security Report
+        run: |
+          echo "# Security Scan Results" > security-report.md
+          echo "## Static Analysis" >> security-report.md
+          cat security-report-static.json | jq -r '.results | length' | xargs -I {} echo "Found {} potential issues" >> security-report.md
+          echo "## Dependency Vulnerabilities" >> security-report.md
+          npm audit --json | jq -r '.metadata.vulnerabilities | to_entries | .[] | "\(.key): \(.value)"' >> security-report.md
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: security-report
+          path: security-report.md 
