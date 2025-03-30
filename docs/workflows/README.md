@@ -1,3 +1,70 @@
+# AI/Human Collaboration Workflows
+
+This directory documents the workflows and processes for AI/human collaboration in this repository.
+
+## Available Workflows
+
+1. **[Branch Automation](branch-automation.md)** - Standard three-stage workflow for AI-generated code
+2. **[AI Safe Pipeline](ai-safe-pipeline.md)** - Iterative validation pipeline for safe AI code generation
+
+## Workflow Comparison
+
+| Feature | Branch Automation | AI Safe Pipeline |
+|---------|------------------|------------------|
+| **Focus** | Simple promotion workflow | Comprehensive validation |
+| **Iterations** | Single-pass | Multiple with progressive improvement |
+| **Validation** | Manual human review | Automated + optional human review |
+| **Branch Structure** | Three stages (gen, review, prod) | Multiple iterations with validation |
+| **Best For** | Simple features, experienced teams | Complex features, safety-critical code |
+
+## Choosing a Workflow
+
+- **Use Branch Automation** when:
+  - The feature is well-defined and straightforward
+  - Human review is readily available
+  - Your team has experience with AI-generated code
+
+- **Use AI Safe Pipeline** when:
+  - The feature is complex or touches critical systems
+  - You need comprehensive automated validation
+  - You want iterative improvement of AI-generated code
+  - You need detailed reporting on code quality, security, etc.
+
+## Integration between Workflows
+
+The workflows can be used together in a complementary way:
+
+1. Start with the **AI Safe Pipeline** for initial generation and validation
+2. Once the pipeline completes successfully, use **Branch Automation** to promote the code through review and production stages
+
+## Common Tools and Scripts
+
+- **[branch-automation.sh](../../scripts/branch-automation.sh)**: Manages the standard three-stage workflow
+- **[run-pipeline.sh](../../scripts/ai-pipeline/run-pipeline.sh)**: Runs the AI Safe Pipeline validation system
+
+## Workflow Visualization
+
+```mermaid
+graph TD
+    A[Feature Request] --> B{Which Workflow?}
+    B -->|Simple| C[Branch Automation]
+    B -->|Complex| D[AI Safe Pipeline]
+    
+    C --> C1[ai-gen branch]
+    C1 --> C2[ai-review branch]
+    C2 --> C3[ai-prod branch]
+    C3 --> E[main branch]
+    
+    D --> D1[Multiple Iterations]
+    D1 --> D2[Validation Steps]
+    D2 --> D3[ai-review branch]
+    D3 --> D4[ai-prod branch]
+    D4 --> E
+    
+    style C fill:#d9f7be,stroke:#389e0d
+    style D fill:#f5cdfe,stroke:#722ed1
+```
+
 # AI Collaboration Workflows
 
 This document outlines the workflows and best practices for collaborating with AI code assistants. It provides guidelines for effective AI-human collaboration in software development.
