@@ -1,0 +1,93 @@
+{
+  "pipeline": {
+    "min_steps": 3,
+    "max_steps": 7,
+    "stopping_conditions": [
+      "no_errors_found",
+      "max_iterations_reached",
+      "human_approval"
+    ],
+    "steps": [
+      {
+        "id": "context_validation",
+        "name": "Context Validation",
+        "description": "Validates that AI understands the context of changes",
+        "script": "scripts/ai-pipeline/validate-context.sh",
+        "required": true,
+        "timeout_seconds": 120
+      },
+      {
+        "id": "syntax_check",
+        "name": "Syntax Check",
+        "description": "Checks for syntax errors in the generated code",
+        "script": "scripts/ai-pipeline/syntax-check.sh",
+        "required": true,
+        "timeout_seconds": 60
+      },
+      {
+        "id": "breaking_changes",
+        "name": "Breaking Changes Detection",
+        "description": "Detects if changes break existing functionality",
+        "script": "scripts/ai-pipeline/detect-breaking-changes.sh",
+        "required": true,
+        "timeout_seconds": 180
+      },
+      {
+        "id": "code_style",
+        "name": "Code Style Verification",
+        "description": "Verifies code adheres to repository style guidelines",
+        "script": "scripts/ai-pipeline/verify-code-style.sh",
+        "required": false,
+        "timeout_seconds": 90
+      },
+      {
+        "id": "security_scan",
+        "name": "Security Vulnerabilities Scan",
+        "description": "Scans for potential security vulnerabilities",
+        "script": "scripts/ai-pipeline/security-scan.sh",
+        "required": true,
+        "timeout_seconds": 150
+      },
+      {
+        "id": "ai_review",
+        "name": "AI Code Review",
+        "description": "Secondary AI reviews the generated code",
+        "script": "scripts/ai-pipeline/ai-review.sh",
+        "required": true,
+        "timeout_seconds": 240
+      },
+      {
+        "id": "human_review",
+        "name": "Human Review Request",
+        "description": "Notifies human reviewer for final approval",
+        "script": "scripts/ai-pipeline/request-human-review.sh",
+        "required": false,
+        "timeout_seconds": 600
+      }
+    ]
+  },
+  "rules": {
+    "repository_rules": [
+      "No direct database access in frontend code",
+      "All public functions must have documentation",
+      "Tests must accompany all new features",
+      "Secrets must never be hardcoded",
+      "External API calls must have error handling",
+      "No security-sensitive operations in client-side code"
+    ],
+    "language_specific": {
+      "javascript": [
+        "Use === for comparison",
+        "Use const and let, avoid var",
+        "Handle promise rejections",
+        "Use descriptive error messages"
+      ],
+      "python": [
+        "Follow PEP8 guidelines",
+        "Use type hints where possible",
+        "Handle exceptions with specific exception types",
+        "Use context managers for resource management"
+      ]
+    }
+  }
+} 
