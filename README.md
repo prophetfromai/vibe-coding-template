@@ -80,14 +80,17 @@ The framework addresses key challenges in security, code quality, and architectu
 │   ├── README.md              # Documentation overview
 │   ├── workflows/             # Workflow documentation
 │   │   ├── README.md          # AI/human collaboration workflows
-│   │   └── branch-automation.md # Branch automation documentation
+│   │   ├── branch-automation.md # Branch automation documentation
+│   │   └── ai-safe-pipeline.md  # AI Safe Pipeline documentation
 │   └── security/              # Security guidelines
 │       └── README.md          # Security protocols
 ├── .github/                   # GitHub configurations
 │   └── README.md              # GitHub automation guidelines
 └── scripts/                   # Automation scripts
     ├── branch-automation.sh   # Branch management script
-    └── setup-repo.sh          # Repository setup script
+    ├── setup-repo.sh          # Repository setup script
+    └── ai-pipeline/           # AI Safe Pipeline scripts
+        └── run-pipeline.sh    # Pipeline execution script
 ```
 
 ## Core Principles
@@ -116,17 +119,17 @@ This will:
 - Configure branch protection workflows
 - Create a sample feature branch
 
-### Branch Workflow
+## Available Workflows
+
+This repository supports two main workflows for integrating AI-generated code:
+
+### 1. Branch Automation Workflow
 
 The repository uses a three-stage branch structure for AI-generated code:
 
 1. **ai-gen/** - Initial AI-generated code (development stage)
 2. **ai-review/** - AI code after human review (verification stage)
 3. **ai-prod/** - Production-ready AI code (production readiness stage)
-
-### Using the Branch Automation
-
-The repository includes a script to manage branch transitions:
 
 ```bash
 # Create a new AI feature branch
@@ -139,21 +142,39 @@ The repository includes a script to manage branch transitions:
 ./scripts/branch-automation.sh feature-name promote-to-prod
 ```
 
-### GitHub Actions Workflow
+### 2. AI Safe Pipeline
 
-For team environments, you can use the GitHub Actions workflow:
+For more complex features or safety-critical code, use the AI Safe Pipeline:
 
-1. Navigate to GitHub Actions → Branch Promotion
+```bash
+# Run the AI Safe Pipeline with automated validation
+./scripts/ai-pipeline/run-pipeline.sh --branch=ai-feature-branch --feature=my-feature
+```
+
+The AI Safe Pipeline provides:
+- Iterative validation with multiple checks
+- Automated testing for syntax, breaking changes, and security issues
+- Progressively improved code quality through multiple iterations
+- Detailed reporting on all validation steps
+
+## GitHub Actions Integration
+
+GitHub Actions workflows are available for team environments:
+
+1. Navigate to Actions → Branch Promotion
 2. Click "Run workflow"
-3. Enter the feature name and select promotion type
+3. Enter the feature name and select the promotion type
 4. Click "Run workflow"
 
-## Workflow Documentation
+The GitHub workflow will handle branch creation, validation, and pull request creation.
+
+## Documentation
 
 For detailed workflow information, see:
 
 - `README-CICD.md` - CI/CD pipeline details
 - `docs/workflows/branch-automation.md` - Branch automation workflow
+- `docs/workflows/ai-safe-pipeline.md` - AI Safe Pipeline documentation
 - `docs/workflows/README.md` - AI/human collaboration patterns
 
 ## Technology Stack
