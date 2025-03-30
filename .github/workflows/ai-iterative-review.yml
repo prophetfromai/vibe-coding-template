@@ -1,0 +1,213 @@
+name: AI Iterative Code Review
+
+on:
+  # Manual trigger with parameters
+  workflow_dispatch:
+    inputs:
+      feature_name:
+        description: 'Feature name (e.g., auth-update)'
+        required: true
+      iteration:
+        description: 'Iteration number'
+        required: true
+        default: '1'
+      total_iterations:
+        description: 'Total number of planned iterations'
+        required: true
+        default: '3'
+      auto_proceed:
+        description: 'Automatically create next iteration branch if review passes'
+        type: boolean
+        default: false
+  
+  # Automatic trigger on push to iteration branches
+  push:
+    branches:
+      - 'ai-gen/*/iteration-*'
+
+jobs:
+  extract-feature-info:
+    runs-on: ubuntu-latest
+    outputs:
+      feature_name: ${{ steps.extract-info.outputs.feature_name }}
+      iteration: ${{ steps.extract-info.outputs.iteration }}
+      total_iterations: ${{ steps.extract-info.outputs.total_iterations }}
+    steps:
+      - name: Extract branch info
+        id: extract-info
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "feature_name=${{ github.event.inputs.feature_name }}" >> $GITHUB_OUTPUT
+            echo "iteration=${{ github.event.inputs.iteration }}" >> $GITHUB_OUTPUT
+            echo "total_iterations=${{ github.event.inputs.total_iterations }}" >> $GITHUB_OUTPUT
+          else
+            # Extract from branch name like ai-gen/feature-name/iteration-N
+            BRANCH_NAME="${{ github.ref_name }}"
+            if [[ $BRANCH_NAME =~ ai-gen/([^/]+)/iteration-([0-9]+) ]]; then
+              FEATURE_NAME="${BASH_REMATCH[1]}"
+              ITERATION="${BASH_REMATCH[2]}"
+              
+              # Try to extract total iterations from feature documentation
+              TOTAL_ITERATIONS=3  # Default fallback value
+              echo "feature_name=$FEATURE_NAME" >> $GITHUB_OUTPUT
+              echo "iteration=$ITERATION" >> $GITHUB_OUTPUT
+              echo "total_iterations=$TOTAL_ITERATIONS" >> $GITHUB_OUTPUT
+            else
+              echo "Error: Branch name does not match expected pattern"
+              exit 1
+            fi
+          fi
+
+  prepare-review:
+    needs: extract-feature-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+      
+      - name: Setup repository
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+      
+      - name: Check out iteration branch
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          BRANCH="ai-gen/$FEATURE_NAME/iteration-$ITERATION"
+          
+          if git show-ref --verify --quiet refs/heads/$BRANCH; then
+            git checkout $BRANCH
+          else
+            echo "Error: Branch $BRANCH does not exist"
+            exit 1
+          fi
+      
+      - name: Generate review report
+        run: |
+          chmod +x scripts/ai-review-automation.sh
+          ./scripts/ai-review-automation.sh \
+            "${{ needs.extract-feature-info.outputs.feature_name }}" \
+            "${{ needs.extract-feature-info.outputs.iteration }}" \
+            "true"
+      
+      - name: Commit review template
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          
+          git add docs/features/$FEATURE_NAME/reviews/
+          git commit -m "chore: generate iteration $ITERATION review template" || echo "No changes to commit"
+          git push origin HEAD
+      
+      - name: Upload review report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: review-report
+          path: docs/features/${{ needs.extract-feature-info.outputs.feature_name }}/reviews/iteration-${{ needs.extract-feature-info.outputs.iteration }}-review.md
+
+  ai-code-review:
+    needs: [extract-feature-info, prepare-review]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Check out iteration branch
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          BRANCH="ai-gen/$FEATURE_NAME/iteration-$ITERATION"
+          git checkout $BRANCH
+      
+      - name: Download review report
+        uses: actions/download-artifact@v3
+        with:
+          name: review-report
+          path: docs/features/${{ needs.extract-feature-info.outputs.feature_name }}/reviews/
+      
+      - name: Perform AI code review
+        id: ai-review
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          
+          # In a real implementation, call your AI provider API here
+          # Example using a curl request to an AI review service:
+          # curl -X POST "https://api.example.com/ai-code-review" \
+          #   -H "Content-Type: application/json" \
+          #   -d "{\"feature\":\"$FEATURE_NAME\",\"iteration\":$ITERATION}" \
+          #   > docs/features/$FEATURE_NAME/reviews/iteration-$ITERATION-review.md
+          
+          # For demonstration, we'll just simulate a successful review
+          echo "review_passed=true" >> $GITHUB_OUTPUT
+          echo "AI review completed successfully (simulation)" 
+          
+          # In a real implementation, parse the review results and set the output
+          # based on whether critical issues were found
+      
+      - name: Commit review results
+        if: ${{ success() }}
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          git add docs/features/$FEATURE_NAME/reviews/
+          git commit -m "docs: add AI review for iteration $ITERATION" || echo "No changes to commit"
+          git push origin HEAD
+
+  create-next-iteration:
+    needs: [extract-feature-info, ai-code-review]
+    if: ${{ needs.ai-code-review.outputs.review_passed == 'true' && github.event.inputs.auto_proceed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup repository
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+      
+      - name: Check iteration count
+        id: check-iterations
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          CURRENT_ITERATION="${{ needs.extract-feature-info.outputs.iteration }}"
+          TOTAL_ITERATIONS="${{ needs.extract-feature-info.outputs.total_iterations }}"
+          
+          if [ "$CURRENT_ITERATION" -lt "$TOTAL_ITERATIONS" ]; then
+            echo "create_next=true" >> $GITHUB_OUTPUT
+            echo "next_iteration=$(($CURRENT_ITERATION + 1))" >> $GITHUB_OUTPUT
+          else
+            echo "create_next=false" >> $GITHUB_OUTPUT
+            echo "is_final=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create next iteration branch
+        if: ${{ steps.check-iterations.outputs.create_next == 'true' }}
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          TOTAL_ITERATIONS="${{ needs.extract-feature-info.outputs.total_iterations }}"
+          NEXT_ITERATION="${{ steps.check-iterations.outputs.next_iteration }}"
+          
+          chmod +x scripts/ai-iterative-branch.sh
+          ./scripts/ai-iterative-branch.sh "$FEATURE_NAME" "$TOTAL_ITERATIONS" iterate "$NEXT_ITERATION"
+      
+      - name: Create review branch (final iteration)
+        if: ${{ steps.check-iterations.outputs.is_final == 'true' }}
+        run: |
+          FEATURE_NAME="${{ needs.extract-feature-info.outputs.feature_name }}"
+          TOTAL_ITERATIONS="${{ needs.extract-feature-info.outputs.total_iterations }}"
+          
+          chmod +x scripts/ai-iterative-branch.sh
+          ./scripts/ai-iterative-branch.sh "$FEATURE_NAME" "$TOTAL_ITERATIONS" finalize 
